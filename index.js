@@ -7,6 +7,8 @@ const path = require('path')
 // declare `app` as a new instance of express js
 const app = new express()
 
+// require ejs templating language
+app.set('view engine','ejs')
 
 // serve public folder for our static files
 app.use(express.static('public'))

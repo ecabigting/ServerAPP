@@ -1,0 +1,22 @@
+{
+  "name": "serverapp",
+  "version": "1.0.0",
+  "description": "sample code",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified \" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ecabigting/ServerAPP.git"
+  },
+  "author": "Eric Thomas D. Cabigting",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ecabigting/ServerAPP/issues"
+  },
+  "homepage": "https://github.com/ecabigting/ServerAPP#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

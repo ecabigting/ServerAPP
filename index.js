@@ -4,6 +4,15 @@ const express = require('express')
 // require the package path from nodejs
 const path = require('path')
 
+// require the mongoose package
+const mongoose = require('mongoose')
+
+// connect to mongoose on local
+mongoose.connect('mongodb://localhost/my_database',
+{
+    useNewUrlParser: true,
+    useUnifiedTopology: true 
+})
 // declare `app` as a new instance of express js
 const app = new express()
 
@@ -33,7 +42,7 @@ app.get('/contact',(req,res) => {
     res.render('contact')
 })
 
-// declare a rout to post page
+// declare a route to post page
 app.get('/post',(req,res) => {
     res.render('post')
 })

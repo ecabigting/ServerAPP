@@ -1,30 +1,37 @@
-// code example done from page 29
-
+// require package express js
 const express = require('express')
-const path = require('path')
-const app = express()
 
+// require the package path from nodejs
+const path = require('path')
+
+// declare `app` as a new instance of express js
+const app = new express()
+
+
+// serve public folder for our static files
 app.use(express.static('public'))
 
-// start the app
-app.listen(1204,()=>{
-    console.log("App Listening on porn 1204")
+// start the app and listen to port 1204
+app.listen(1204, ()=>{
+    console.log('App listening on port 1204')
 })
 
-// home
-app.get('/',function getResponse(req,res){
-    console.log(__dirname)
-    res.sendFile(path.resolve(__dirname,'index.html')) 
+// declare a route to home(index) or root
+app.get('/', (req,res)=> {
+    res.sendFile(path.resolve(__dirname, 'pages/index.html'))
 })
 
-// about
-app.get('/about',function getResponse(req,res){
-    console.log(__dirname)
-    res.sendFile(path.resolve(__dirname,'about.html')) 
+// declare a route to about page
+app.get('/about',(req,res) => {
+    res.sendFile(path.resolve(__dirname,'pages/about.html'))
 })
 
-// contact
-app.get('/contact',function getResponse(req,res){
-    console.log(__dirname)
-    res.sendFile(path.resolve(__dirname,'contact.html')) 
+// declare a route to contact page
+app.get('/contact',(req,res) => {
+    res.sendFile(path.resolve(__dirname,'pages/contact.html'))
+})
+
+// declare a rout to post page
+app.get('/post',(req,res) => {
+    res.sendFile(path.resolve(__dirname,'pages/post.html'))
 })

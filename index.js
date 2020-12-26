@@ -20,20 +20,20 @@ app.listen(1204, ()=>{
 
 // declare a route to home(index) or root
 app.get('/', (req,res)=> {
-    res.sendFile(path.resolve(__dirname, 'pages/index.html'))
+    res.render('index')
 })
 
 // declare a route to about page
 app.get('/about',(req,res) => {
-    res.sendFile(path.resolve(__dirname,'pages/about.html'))
+    res.render('about')
 })
 
 // declare a route to contact page
 app.get('/contact',(req,res) => {
-    res.sendFile(path.resolve(__dirname,'pages/contact.html'))
+    res.render('contact')
 })
 
 // declare a rout to post page
 app.get('/post',(req,res) => {
-    res.sendFile(path.resolve(__dirname,'pages/post.html'))
+    res.render('post')
 })

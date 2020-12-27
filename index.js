@@ -1,83 +1,58 @@
-// require package express js
-const express = require('express')
+const express = require('express') // require package express js
+const path = require('path') // require the package path from nodejs
+const mongoose = require('mongoose') // require the mongoose package
+mongoose.connect('mongodb://localhost/my_database',{useNewUrlParser: true,useUnifiedTopology: true,useCreateIndex:true }) // connect to MongoDB on local using mongoose
 
-// require the package path from nodejs
-const path = require('path')
-
-// require the mongoose package
-const mongoose = require('mongoose')
-
-// connect to mongoose on local
-mongoose.connect('mongodb://localhost/my_database',
-{
-    useNewUrlParser: true,
-    useUnifiedTopology: true 
-})
-// declare `app` as a new instance of express js
-const app = new express()
-
-// require ejs templating language
-app.set('view engine','ejs')
-
-// serve public folder for our static files
-app.use(express.static('public'))
-
-// start the app and listen to port 1204
-app.listen(1204, ()=>{
-    console.log('App listening on port 1204')
-})
+const app = new express()// declare `app` as a new instance of express js
 
 // we need the body-parsing middleware called body-parser
 // body-parser parse incoming request bodies
 // it will make the form data available under the req.body property
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
-app.use(bodyParser.urlencoded({extended:true}))
+app.use(bodyParser.urlencoded({extended:true})) 
+app.use(express.static('public')) // serve public folder for our static files
+app.set('view engine','ejs') // require ejs templating language
 
-// lets import the BlogPost Model
-const BlogPost = require('./models/BlogPost.js')
+app.listen(1204, ()=>{ console.log('App listening on port 1204') }) // start the app and listen to port 1204
 
-// declare a route to home(index) or root
-// app.get('/', async (req,res)=>{
-//     // lets retrieve all blog post and hold them in blogposts varliable
-//     const blogposts = await BlogPost.find({})
-//     // calling responds to render 'index'
-//     // we pass back the blogposts data back to
-//     // the browser by providing it as the second argument to 'render'
-//     res.render('index',{
-//         // if keyname and value name are the same we can use the same
-//         // so use 'blogpost' instead of 'blogpost:blogpost'
-//         blogposts
-//     })
-// })
+/****************/
+/** MODEL INIT **/
+const BlogPost = require('./models/BlogPost.js') // lets import the BlogPost Model
 
-app.get('/',async (req,res)=>{
-    const blogposts = await BlogPost.find({})
-    res.render('index',{blogposts});
-})
-    
-
-// declare a route to about page
-app.get('/about',(req,res) => {
+/***********************/
+/** PUBLIC GET ROUTES **/
+app.get('/about',(req,res) => { // declare a route to about page
     res.render('about')
 })
 
-// declare a route to contact page
-app.get('/contact',(req,res) => {
+app.get('/contact',(req,res) => { // declare a route to contact page
     res.render('contact')
 })
 
-// declare a route to blog posts page
-app.get('/post',(req,res) => {
-    res.render('post')
+app.get('/post/:id',async (req,res) => { // declare a route to blog posts page
+    const foundPost = await BlogPost.findById(req.params.id) // find the blogpost via id
+    res.render('post',{foundPost})
 })
 
-// declare a route to create new blog post
-app.get('/post/new',(req,res) => {
+app.get('/post/new',(req,res) => { // declare a route to create new blog post
     res.render('create')
 })
 
-// declare a route to to recieved POST request
+app.get('/', async (req,res) => { // declare a route to home(index) or root
+    const blogposts = await BlogPost.find({}) // lets retrieve all blog post and hold them in blogposts varliable
+    // calling responds to render 'index'
+    // we pass back the blogposts data back to
+    // the browser by providing it as the second argument to 'render'
+    res.render('index',{ 
+        blogposts // NOTE: if keyname and value name are the same use 'blogpost' instead of 'blogpost:blogpost'
+    })
+})
+
+/************************/
+/** PUBLIC POST ROUTES **/
+
+// a route to recieved POST request for creating post
 // we specify async as the following method is an asynchronous call
 // and using await for BlogPost.create, we are saying that we will await
 // the completion of the current line before the below line can be executed
@@ -89,4 +64,15 @@ app.post('/posts/store',async (req,res) => {
     // which is called after execution
     await BlogPost.create(req.body)
     res.redirect('/')
+})
+
+// a route to recieved POST request for searching
+app.post('/posts/search',async (req,res) => { 
+    console.log("Search for term: " + req.body.search)
+    const blogposts = await BlogPost.find(
+            {$text : {$search: req.body.search}},
+            {score: {$meta: "textScore"}}
+        )
+    console.log("Search for found: " + blogposts)
+    res.render('index',{ blogposts })
 })

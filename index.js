@@ -76,3 +76,6 @@ app.post('/posts/search',async (req,res) => {
     console.log("Search for found: " + blogposts)
     res.render('index',{ blogposts })
 })
+
+
+// pg65

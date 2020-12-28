@@ -39,16 +39,14 @@ app.get('/post/new',(req,res) => { // declare a route to create new blog post
     res.render('create')
 })
 
-app.get('/', (req,res) => { // declare a route to home(index) or root
-    const blogposts = BlogPost.find({},(error,blogpost)=>{
-        res.render('index',{ 
-            blogposts // NOTE: if keyname and value name are the same use 'blogpost' instead of 'blogpost:blogpost'
-        })
-    }) // lets retrieve all blog post and hold them in blogposts varliable
+app.get('/', async (req,res) => { // declare a route to home(index) or root
+    const blogposts = await BlogPost.find({}) // lets retrieve all blog post and hold them in blogposts varliable
     // calling responds to render 'index'
     // we pass back the blogposts data back to
     // the browser by providing it as the second argument to 'render'
-    
+    res.render('index',{ 
+        blogposts // NOTE: if keyname and value name are the same use 'blogpost' instead of 'blogpost:blogpost'
+    })
 })
 
 /************************/

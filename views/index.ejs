@@ -33,7 +33,10 @@
                 <%= blogposts[i].body %>
               </h3>
             </a>
-            <p class="post-meta">Posted by <a href="#">Start Bootstrap</a> on September 24, 2019</p>
+            <p class="post-meta">Posted by 
+              <a href="#"><%= blogposts[i].createdBy %></a> 
+              on <%= blogpostsp[i].createdDate.toDateString() %>
+            </p>
             </div>
             <hr>
           <% } %>

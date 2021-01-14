@@ -24,7 +24,12 @@
     <div class="row">
       <div class="col-lg-8 col-md-10 mx-auto">
         <p>Write something cool..</p>
-        <form action="/posts/store" method="POST">
+        <form action="/posts/store" method="POST" enctype="multipart/form-data">
+          <!-- cool note about the line above <form> 
+              it has the attribute enctype which tells the browser
+              that the form contains multimedia. The browser will then
+              encrypt the multi media before sending it to the server.
+               -->
           <div class="control-group">
             <div class="form-group floating-label-form-group controls">
               <label>Title</label>
@@ -51,6 +56,13 @@
               <p class="help-block text-danger"></p>
             </div>
           </div>
+          <div class="control-group">
+            <div class="form-group floating-label-form-group controls">
+              <label>Image</label>
+              <input type="file" class="form-control" id="image"
+              name="image">
+            </div>
+          </div>             
           <br>
           <div id="success"></div>
           <button type="submit" class="btn btn-primary" id="sendMessageButton">Send</button>

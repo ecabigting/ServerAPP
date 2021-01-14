@@ -9,6 +9,7 @@ const BlogPostSchema = new Schema({
     createdDate : { type: Date, default: new Date() },
     lastEditedBy : { type: Date, default: new Date() },
     lastEditedDate : { type: Date, default: new Date() },
+    image: String
 });
 
 

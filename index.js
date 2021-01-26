@@ -7,7 +7,7 @@ mongoose.connect('mongodb://localhost/efnMongoDB',{useNewUrlParser: true,useUnif
 
 const app = new express() // declare `app` as a new instance of express js
 
-/* we need the body-parsing middleware called body-parser
+/* we need the body-parsing middleware called body-parser,
  body-parser parse incoming request bodies
  it will make the form data available under the req.body property
  */
@@ -112,4 +112,4 @@ app.post('/posts/search',async (req,res) => {
 })
 
 
-// pg75
+// pg76

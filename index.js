@@ -1,5 +1,4 @@
 const express = require('express') // require package express js
-const path = require('path') // require the package path from nodejs
 const fileUpload = require('express-fileupload') // adds the files property to the req object so that we can access the uploaded files using req.files.
 
 const mongoose = require('mongoose') // require the mongoose package
@@ -17,42 +16,48 @@ app.use(bodyParser.urlencoded({extended:true}))
 app.use(express.static('public')) // serve public folder for our static files
 app.use(fileUpload()) // register the fileupload package in Express
 app.set('view engine','ejs') // require ejs templating language
+const validateMiddleware = require('./middlewares/validationMiddleware.js')
+app.use('/posts/store',validateMiddleware)
 
 app.listen(1204, ()=>{ console.log('>> App listening on port 1204') }) // start the app and listen to port 1204
 
-/****************/
-/** MODEL INIT **/
-const BlogPost = require('./models/BlogPost.js') // lets import the BlogPost Model
-
 /***********************/
 /** PUBLIC GET ROUTES **/
-app.get('/about',(req,res) => { // declare a route to about page
-    res.render('about')
-})
+// app.get('/about',(req,res) => { // declare a route to about page
+//     res.render('about')
+// })
 
-app.get('/contact',(req,res) => { // declare a route to contact page
-    res.render('contact')
-})
+// app.get('/contact',(req,res) => { // declare a route to contact page
+//     res.render('contact')
+// })
 
-app.get('/post/new',(req,res) => { // declare a route to create new blog post
-    res.render('create')
-})
+// app.get('/post/new',(req,res) => { // declare a route to create new blog post
+//     res.render('create')
+// })
+// replace the above code to a controller call
+const newPostController = require('./controllers/newPost')
+app.get('/post/new',newPostController)
 
-app.get('/post/:id',async (req,res) => { // declare a route to blog posts page
-    const foundPost = await BlogPost.findById(req.params.id) // find the blogpost via id
-    res.render('post',{foundPost})
-})
+// app.get('/post/:id',async (req,res) => { // declare a route to blog posts page
+//     const foundPost = await BlogPost.findById(req.params.id) // find the blogpost via id
+//     res.render('post',{foundPost})
+// })
+const getPostController = require('./controllers/getPost.js')
+app.get('/post/:id',getPostController)
 
-app.get('/', async (req,res) => { // declare a route to home(index) or root
-    const blogposts = await BlogPost.find({}) // lets retrieve all blog post and hold them in blogposts varliable
-    /* calling responds to render 'index'
-     we pass back the blogposts data back to
-     the browser by providing it as the second argument to 'render'
-     */
-    res.render('index',{ 
-        blogposts // NOTE: if keyname and value name are the same use 'blogpost' instead of 'blogpost:blogpost'
-    })
-})
+// app.get('/', async (req,res) => { // declare a route to home(index) or root
+//     const blogposts = await BlogPost.find({}) // lets retrieve all blog post and hold them in blogposts varliable
+//     /* calling responds to render 'index'
+//      we pass back the blogposts data back to
+//      the browser by providing it as the second argument to 'render'
+//      */
+//     res.render('index',{ 
+//         blogposts // NOTE: if keyname and value name are the same use 'blogpost' instead of 'blogpost:blogpost'
+//     })
+// })
+// repalce the above code to a controller call
+const homeController = require('./controllers/home')
+app.get('/',homeController)
 
 /************************/
 /** PUBLIC POST ROUTES **/
@@ -62,54 +67,59 @@ app.get('/', async (req,res) => { // declare a route to home(index) or root
    and using await for BlogPost.create, we are saying that we will await
    the completion of the current line before the below line can be executed 
 */
-app.post('/posts/store', (req,res) => {
-    /* create a shortcut to req.files.image
-    the req.files.image object contains properties such as mv
-    mv - is a function to move the file elsewhere on your server name
-    see complete list of properties of express-fileupload
-    https://www.npmjs.com/package/express-fileupload
-    */ 
-    let image = req.files.image
-    //lets create a unique image name first
-    let imgName = new Date().getTime() + "_" + image.name.replace(/\W/g,'') + "." + image.name.split('.')[1]
-    console.log(imgName)
-    /* the code below image.mv moves the uploaded file to public/img directory
-       and name it using the image.name property
-       once this is done, we create the post
-     */
-    image.mv(path.resolve(__dirname,'public/img',imgName),
-            /*note the async statement, 
-              we only use async in the scope where we use await
-             */
-            async (error) => {
-                // lets log the error just in case
-                console.log(error)
-                /* the model will create
-                a new doc with the browser data sent
-                the first arg recieves the req.body
-                and callback function as the second arg
-                which is called after execution
-                */
-                await BlogPost.create(
-                    {
-                        ...req.body,
-                        image:'/img/' + imgName
-                    }
-                )
-                res.redirect('/')
-            }
-    )
-})
+// app.post('/posts/store', (req,res) => {
+//     /* create a shortcut to req.files.image
+//     the req.files.image object contains properties such as mv
+//     mv - is a function to move the file elsewhere on your server name
+//     see complete list of properties of express-fileupload
+//     https://www.npmjs.com/package/express-fileupload
+//     */ 
+//     let image = req.files.image
+//     //lets create a unique image name first
+//     let imgName = new Date().getTime() + "_" + image.name.replace(/\W/g,'') + "." + image.name.split('.')[1]
+//     console.log(imgName)
+//     /* the code below image.mv moves the uploaded file to public/img directory
+//        and name it using the image.name property
+//        once this is done, we create the post
+//      */
+//     image.mv(path.resolve(__dirname,'public/img',imgName),
+//             /*note the async statement, 
+//               we only use async in the scope where we use await
+//              */
+//             async (error) => {
+//                 // lets log the error just in case
+//                 console.log(error)
+//                 /* the model will create
+//                 a new doc with the browser data sent
+//                 the first arg recieves the req.body
+//                 and callback function as the second arg
+//                 which is called after execution
+//                 */
+//                 await BlogPost.create(
+//                     {
+//                         ...req.body,
+//                         image:'/img/' + imgName
+//                     }
+//                 )
+//                 res.redirect('/')
+//             }
+//     )
+// })
+// code above is replace by a controller call
+const storePostController = require('./controllers/storePost.js')
+app.post('/posts/store',storePostController)
 
 // a route to recieved POST request for searching
-app.post('/posts/search',async (req,res) => { 
-    console.log("Search for term: " + req.body.search)
-    const blogposts = await BlogPost.find(
-            {$text : {$search: req.body.search}},
-            {score: {$meta: "textScore"}}
-        )
-    res.render('index',{ blogposts })
-})
+// app.post('/posts/search',async (req,res) => { 
+//     console.log("Search for term: " + req.body.search)
+//     const blogposts = await BlogPost.find(
+//             {$text : {$search: req.body.search}},
+//             {score: {$meta: "textScore"}}
+//         )
+//     res.render('index',{ blogposts })
+// })
+// replace the above code with controller call
+const searchPostController = require('./controllers/searchPost.js')
+app.post('/posts/search',searchPostController)
 
-
-// pg76
+// pg82

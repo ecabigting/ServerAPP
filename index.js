@@ -1,22 +1,10 @@
 const express = require('express') // require package express js
-const path = require('path') // require the package path from nodejs
 const fileUpload = require('express-fileupload') // adds the files property to the req object so that we can access the uploaded files using req.files.
 
 const mongoose = require('mongoose') // require the mongoose package
 mongoose.connect('mongodb://localhost/efnMongoDB',{useNewUrlParser: true,useUnifiedTopology: true,useCreateIndex:true }) // connect to MongoDB on local using mongoose
 
 const app = new express() // declare `app` as a new instance of express js
-
-/****************/
-/** Helpers **/
-const validateMiddleWare = (req,res,next)=>{
-    if(req.files == null || req.body.title == null || req.body.title == null){
-        return res.redirect('/post/new')
-    }
-    next()
-}
-
-
 
 /* we need the body-parsing middleware called body-parser,
  body-parser parse incoming request bodies
@@ -28,13 +16,10 @@ app.use(bodyParser.urlencoded({extended:true}))
 app.use(express.static('public')) // serve public folder for our static files
 app.use(fileUpload()) // register the fileupload package in Express
 app.set('view engine','ejs') // require ejs templating language
-app.use('/posts/store',validateMiddleWare)
+const validateMiddleware = require('./middlewares/validationMiddleware.js')
+app.use('/posts/store',validateMiddleware)
 
 app.listen(1204, ()=>{ console.log('>> App listening on port 1204') }) // start the app and listen to port 1204
-
-/****************/
-/** MODEL INIT **/
-const BlogPost = require('./models/BlogPost.js') // lets import the BlogPost Model
 
 /***********************/
 /** PUBLIC GET ROUTES **/
@@ -124,13 +109,17 @@ app.get('/',homeController)
 const storePostController = require('./controllers/storePost.js')
 app.post('/posts/store',storePostController)
 
-
 // a route to recieved POST request for searching
-app.post('/posts/search',async (req,res) => { 
-    console.log("Search for term: " + req.body.search)
-    const blogposts = await BlogPost.find(
-            {$text : {$search: req.body.search}},
-            {score: {$meta: "textScore"}}
-        )
-    res.render('index',{ blogposts })
-})
+// app.post('/posts/search',async (req,res) => { 
+//     console.log("Search for term: " + req.body.search)
+//     const blogposts = await BlogPost.find(
+//             {$text : {$search: req.body.search}},
+//             {score: {$meta: "textScore"}}
+//         )
+//     res.render('index',{ blogposts })
+// })
+// replace the above code with controller call
+const searchPostController = require('./controllers/searchPost.js')
+app.post('/posts/search',searchPostController)
+
+// pg82

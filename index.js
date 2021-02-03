@@ -7,6 +7,17 @@ mongoose.connect('mongodb://localhost/efnMongoDB',{useNewUrlParser: true,useUnif
 
 const app = new express() // declare `app` as a new instance of express js
 
+/****************/
+/** Helpers **/
+const validateMiddleWare = (req,res,next)=>{
+    if(req.files == null || req.body.title == null || req.body.title == null){
+        return res.redirect('/post/new')
+    }
+    next()
+}
+
+
+
 /* we need the body-parsing middleware called body-parser,
  body-parser parse incoming request bodies
  it will make the form data available under the req.body property
@@ -17,6 +28,7 @@ app.use(bodyParser.urlencoded({extended:true}))
 app.use(express.static('public')) // serve public folder for our static files
 app.use(fileUpload()) // register the fileupload package in Express
 app.set('view engine','ejs') // require ejs templating language
+app.use('/posts/store',validateMiddleWare)
 
 app.listen(1204, ()=>{ console.log('>> App listening on port 1204') }) // start the app and listen to port 1204
 
